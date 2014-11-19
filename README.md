@@ -1,57 +1,56 @@
-# Best practices in Android development
+# Android geliştirme için örnek alınası davranışlar
 
-Lessons learned from Android developers in Futurice. Avoid reinventing the wheel by following these guidelines. If you are interested in iOS or Windows Phone development, be sure to check also our [**iOS Good Practices**](https://github.com/futurice/ios-good-practices) and [**Windows client Good Practices**](https://github.com/futurice/win-client-dev-good-practices) documents.
+Buradaki dersler Futurice'nin Android geliştiricilerinden öğrenildi. Buradaki rehberleri takip ederek tekerleği yeniden icat etmekten kaçınabilirsiniz. Windows Phone ya da iOS geliştirmeyle ilgileniyorsanız [[**iOS için Örnek Alınası Davranışlar**]](https://github.com/futurice/ios-good-practices) veya [**Windows Phone için Örnek Alınası Davranışlar**](https://github.com/futurice/win-client-dev-good-practices) belgelerine bir bakın.
 
-Feedback is welcomed, but check the [guidelines](https://github.com/futurice/android-best-practices/tree/master/CONTRIBUTING.md) first.
+Geribildirimler başımızın üstüne ama öncelikle [bu belgeye](https://github.com/futurice/android-best-practices/tree/master/CONTRIBUTING.md) bir göz atın.
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-android--best--practices-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1091)
 
-## Summary
+## Özet
 
-#### Use Gradle and its recommended project structure
-#### Put passwords and sensitive data in gradle.properties
-#### Don't write your own HTTP client, use Volley or Retrofit libraries
-#### Use the Jackson library to parse JSON data
-#### Use Volley or Retrofit+OkHttp+Picasso for networking and images
-#### Avoid Guava and use only a few libraries due to the *65k method limit*
-#### Use Fragments to represent a UI screen
-#### Use Activities just to manage Fragments
-#### Layout XMLs are code, organize them well
-#### Use styles to avoid duplicate attributes in layout XMLs
-#### Use multiple style files to avoid a single huge one
-#### Keep your colors.xml short and DRY, just define the palette
-#### Also keep dimens.xml DRY, define generic constants
-#### Do not make a deep hierarchy of ViewGroups
-#### Avoid client-side processing for WebViews, and beware of leaks
-#### Avoid testing with Robolectric on Activities, Fragments, and Views
+#### Gradle'ı ve onun tavsiye edilen proje yapısını kullanın
+#### Parolaları ve gizli kalması gereken bilgileri gradle.properties'in içine koyun
+#### Kendi HTTP istemcisini yazmayın, Volley ya da Retrofit kütüphanelerini kullanın.
+#### JSON verilerini ayrıştırmak (parse) için Jackson kütüphanesini kullanın
+#### Ağ işleri ve görseller için Volley veya Retrofit+OkHttp+Picasso kullanın
+#### Guava'dan kaçının ve *65k metot limiti* nedeniyle birkaç kütüphaneden fazlasını kullanmayın
+#### UI ekranı sunmak için Fragment'ları kullanın
+#### Fragment'ları yönetmek için Activity'leri kullanın
+#### Layout XML'leri koddur; doğru düzgün organize edin
+#### Style kullanın ve layout XML'lerinde mükerrer attibute kullanmaktan kaçının
+#### Kocaman bir tanesiyle uğraşmak yerine birden fazla style dosyası kullanın
+#### colors.xml dosyanızı kısa tutun, tekrarlamayın, sadece palet tanımlamanız bile yeterli*
+#### dimens.xml dosyanız da tekrarlama yapmayın, genel sabitleri tanımlamaya bakın
+#### ViewGroup'lar için uzun uzadıya hiyerarşiler kurmayın
+#### WebView'larda istemci tarafı işlemlerden kaçının ve sızıntılara dikkat edin
+#### Roboelectris ile Activity'leri, Fragment'ları ve View'ları test etmekten kaçının
 
 
 ----------
 
 ### Android SDK
+[Android SDK](https://developer.android.com/sdk/installing/index.html?pkg=tools)'nızı ev dizininizde bir yere veya uygulamadan bağımsız başka bir yerde tutun. Bazı IDE'ler SDK ile beraber gelir ve SDK IDE ile aynı dizinde olabilir. Bu durum IDE'yi güncelleyeceğinizde (ya da yeniden kuracağınızda) hiç de iyi bir şey değildir. Aynı şekilde IDE değiştireceğinizde. Aynı şekilde IDE'niz sizin kullanıcınızda (root altında değil) çalışacaksa SDK'yı sistem seviyesinde ve sudo izinleri gerektirecek bir yere almaktan da kaçının.
 
-Place your [Android SDK](https://developer.android.com/sdk/installing/index.html?pkg=tools) somewhere in your home directory or some other application-independent location. Some IDEs include the SDK when installed, and may place it under the same directory as the IDE. This can be bad when you need to upgrade (or reinstall) the IDE, or when changing IDEs. Also avoid putting the SDK in another system-level directory that might need sudo permissions, if your IDE is running under your user and not under root.
+### İnşa sistemi (Build system)
 
-### Build system
+İnşa sistemi konusundaki öntanımlı seçeneğiniz [Gradle](http://tools.android.com/tech-docs/new-build-system) olsun. Ant daha sınırlı çalışır ve geveze (verbose) çalışır - çıktısı çoktur. Gradle ile şunlar çok kolaydır:
 
-Your default option should be [Gradle](http://tools.android.com/tech-docs/new-build-system). Ant is much more limited and also more verbose. With Gradle, it's simple to:
+- Uygulamanızın farklı varyantlarını/sürümlerini inşa etmek
+- Betik gibi kısa kısa yapılarla basit görevler oluşturmak
+- Bağımlılıkları yönetmek ve indirmek
+- Keystore'ları özelleştirmek
+- ve daha fazlası
 
-- Build different flavours or variants of your app
-- Make simple script-like tasks
-- Manage and download dependencies
-- Customize keystores
-- And more
+Android'in Gradle eklentisi yeni standart inşa sistemi olarak Google tarafından aktif bir biçimde geliştirilmektedir.
 
-Android's Gradle plugin is also being actively developed by Google while as the new standard build system.
+### Proje yapısı
 
-### Project structure
+Çok bilinen iki seçeneğiniz var: eski Ant & Eclipse ADT proje yapısı ya da yeni Gradle & Android Studio proje yapısı. Biz yeni proje yapısını kullanıyor olsak bile hangisini kullanıp kullanmayacağınızı siz seçebilirsiniz. Eskisini seçseniz bile `build.gradle` dosyasıyla beraber bir Gradle yapılandırması sağlamaya çalışın.
 
-There are two popular options: the old Ant & Eclipse ADT project structure, and the new Gradle & Android Studio project structure. You can make the decision whether to use one or the other, although we recommend the new project structure. If using the old, try to provide also a Gradle configuration `build.gradle`.
-
-Old structure:
+Eski yapı:
 
 ```
-old-structure
+eski-yapi
 ├─ assets
 ├─ libs
 ├─ res
@@ -63,11 +62,11 @@ old-structure
 └─ proguard-rules.pro
 ```
 
-New structure:
+Yeni yapı:
 
 ```
-new-structure
-├─ library-foobar
+yeni-yapi
+├─ falanca-kutuphanesi
 ├─ app
 │  ├─ libs
 │  ├─ src
@@ -85,39 +84,39 @@ new-structure
 └─ settings.gradle
 ```
 
-The main difference is that the new structure explicitly separates 'source sets' (`main`, `androidTest`), a concept from Gradle. You could, for instance, add source sets 'paid' and 'free' into `src` which will have source code for the paid and free flavours of your app.
+Yeni yapının en temel farklı açıkça ayrılmış 'source set'leridir (`main`, `androidTest`) ki bu Gradle'ın bir konseptidir. Bu sayede örneğin `src` dizininin altına, uygulamanızın ücretli ve ücretsiz sürümlerinin kaynak kodlarını tutacak 'parali' ve 'bedava' isimli dizinler şeklinde source set'ler koyabilirsiniz.
 
-Having a top-level `app` is useful to distinguish your app from other library projects (e.g., `library-foobar`) that will be referenced in your app. The `settings.gradle` then keeps references to these library projects, which `app/build.gradle` can reference to.
+Üst seviye bir `app` dizini, uygulamanıza referans olarak gösterdiğiniz kütüphane projelerini (bkz: `falanca-kutuphanesi`) uygulamanızdan ayırt etmek açısından kullanışlıdır. `settings.gradle` dosyası da daha sonra  `app/build.gradle` dosyasında referans olarak kullanabileceğiniz bu kütüphane projelerinin referanslarını tutar.
 
-### Gradle configuration
+### Gradle yapılandırması
 
-**General structure.** Follow [Google's guide on Gradle for Android](http://tools.android.com/tech-docs/new-build-system/user-guide)
+**Genel yapı.** Bunun için [Google'ın Android için Gradle rehberi](http://tools.android.com/tech-docs/new-build-system/user-guide)ni takip edin.
 
-**Small tasks.** Instead of (shell, Python, Perl, etc) scripts, you can make tasks in Gradle. Just follow [Gradle's documentation](http://www.gradle.org/docs/current/userguide/userguide_single.html#N10CBF) for more details.
+**Kısa kısa görevler.** Betikler (shell, Python, Perl, etc) yerine Gradle'ın içinde de görevler oluşturabilirsiniz. Daha fazla ayrıntı için sadece [Gradle'ın belgelendirmesi](http://www.gradle.org/docs/current/userguide/userguide_single.html#N10CBF)ni okumanız yeterli.
 
-**Passwords.** In your app's `build.gradle` you will need to define the `signingConfigs` for the release build. Here is what you should avoid:
+**Parolalar.** Uygulamanızın `build.gradle` dosyasında, uygulamanızın canlı (release) inşası için `signingConfigs`i tanımlamanız gerekecek. Burada şunları yapmaktan kaçının:
 
-_Don't do this_. This would appear in the version control system.
+_Böyle yapmayın_. Bu şekilde bu parola bilgisi sürüm kontrol sisteminde (Git gibi) görünür.
 
 ```groovy
 signingConfigs {
     release {
         storeFile file("myapp.keystore")
-        storePassword "password123"
-        keyAlias "thekey"
-        keyPassword "password789"
+        storePassword "parola123456"
+        keyAlias "anahtar"
+        keyPassword "parola123456"
     }
 }
 ```
 
-Instead, make a `gradle.properties` file which should _not_ be added to the version control system:
+Bunun yerine sürüm kontrol sistemine _eklememeniz_ gereken bir `gradle.properties` dosyası oluşturun:
 
 ```
-KEYSTORE_PASSWORD=password123
-KEY_PASSWORD=password789
+KEYSTORE_PASSWORD=parola123456
+KEY_PASSWORD=parola123456
 ```
 
-That file is automatically imported by gradle, so you can use it in `build.gradle` as such:
+Bu dosya otomatik olarak Gradle tarafından içeri aktarılır ve bu sayede tıpkı şuradaki gibi `build.gradle` dosyasında kullanabilirsiniz:
 
 ```groovy
 signingConfigs {
@@ -125,17 +124,17 @@ signingConfigs {
         try {
             storeFile file("myapp.keystore")
             storePassword KEYSTORE_PASSWORD
-            keyAlias "thekey"
+            keyAlias "anahtar"
             keyPassword KEY_PASSWORD
         }
         catch (ex) {
-            throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+            throw new InvalidUserDataException("Ops! gradle.properties içinde KEYSTORE_PASSWORD ve KEY_PASSWORD tanımlamanız gerekiyor.")
         }
     }
 }
 ```
 
-**Prefer Maven dependency resolution instead of importing jar files.** If you explicitly include jar files in your project, they will be of some specific frozen version, such as `2.1.1`. Downloading jars and handling updates is cumbersome, this is a problem that Maven solves properly, and is also encouraged in Android Gradle builds. You can specify a range of versions, such as `2.1.+` and Maven will handle the automatic update to the most recent version matching that pattern. Example:
+**jar dosyalarını `import` edeceğinize Maven'ın bağımlılık çözümlemesini tercih edin.** Eğer elle projenize jar dosyalarını eklerseniz, bir yerden sonra onların eklediğiniz gibi kalmış, `2.1.1` gibi sürümleriyle başbaşa kalacaksınız. Jar'ları indirmek ve güncellemelerini yönetmek çok hantal bir çözüm ve Maven bu problemi çok güzel çözüyor ve aynı şekilde Android'in Gradle inşaları da böyle yürüyor. İsterseniz sürümler için `2.1.+` gibi kapsamlar tanımlayabilirsiniz ve bu sayede Maven bu şablona uyan en son sürümleri güncelleme işini otomatik olarak yönetir. Örnek:
 
 ```groovy
 dependencies {
@@ -149,27 +148,27 @@ dependencies {
 }
 ```
 
-### IDEs and text editors
+### IDE'ler ve metin editörleri
 
-**Use whatever editor, but it must play nicely with the project structure.** Editors are a personal choice, and it's your responsibility to get your editor functioning according to the project structure and build system.
+**İstediğiniz editörü kullanın ama proje yapısıyla güzelce uymasına da dikkat edin.** Editörler kişisel seçimdir ve editörünüzü proje yapısı ve inşa sistemine uyumlu çalıştırmak sizin sorumluluğunuzdur.
 
-The most recommended IDE at the moment is [Android Studio](https://developer.android.com/sdk/installing/studio.html), because it is developed by Google, is closest to Gradle, uses the new project structure by default, is finally in beta stage, and is tailored for Android development.
+Şu an Google tarafından geliştirilme, Gradle'a yakınlık, öntanımlı olarak yeni proje yapısını kullanmak gibi sebeplerden ötürü en çok önerilen IDE [Android Studio](https://developer.android.com/sdk/installing/studio.html). Beta aşamasından çıktı ve Android geliştirmeye epey de uygun bir halde.
 
-You can use [Eclipse ADT](https://developer.android.com/sdk/installing/index.html?pkg=adt) if you wish, but you need to configure it, since it expects the old project structure and Ant for building. You can even use a plain text editor like Vim, Sublime Text, or Emacs. In that case, you will need to use Gradle and `adb` on the command line. If Eclipse's integration with Gradle is not working for you, your options are using the command line just to build, or migrating to Android Studio.
+Dilerseniz [Eclipse ADT](https://developer.android.com/sdk/installing/index.html?pkg=adt) de kullanabilirsiniz fakat inşa işleri için Ant'yi ve eski proje yapısını kullandığından dolayı yapılandırmak zorunda kalırsınız. İsterseniz Vim, Sublime Text veya Emacs gibi düz metin editörlerini bile kullanabilirsiniz. Fakat bu sefer de Gradle'ı ve komut satırından `adb`yi kullanmanız gerekecek. Eğer Eclipse'in Gradle ile olan entegrasyonu sizde çalışmazsa projenizi inşa etmek için komut satırını kullanmak ya da Android Studio'ya göç etmek seçenekleriniz arasında.
 
-Whatever you use, just make sure Gradle and the new project structure remain as the official way of building the application, and avoid adding your editor-specific configuration files to the version control system. For instance, avoid adding an Ant `build.xml` file. Especially don't forget to keep `build.gradle` up-to-date and functioning if you are changing build configurations in Ant. Also, be kind to other developers, don't force them to change their tool of preference.
+Ne kullanırsanız kullanın, sadece Gradle ve yeni proje yapısının uygulama inşa etmek için resmî yol olarak kalacağını bilin ve sürüm kontrol sistemlerine editör-spesifik yapılandırma dosyalarınızı eklemekten kaçının. Örneğin Ant inşa sisteminin `build.xml` dosyasını eklemekten kaçının. İnşa yapılandırmalarını Ant'nin içinde değiştiriyorsanız özellikle `build.gradle`ı güncel tutmayı unutmayın. Aynı zamanda diğer geliştiricilere bir iyilik yapın ve onları tercih ettikleri araçları değiştirmeye zorlamayın.
 
-### Libraries
+### Kütüphaneleler
 
-**[Jackson](http://wiki.fasterxml.com/JacksonHome)** is a Java library for converting Objects into JSON and vice-versa. [Gson](https://code.google.com/p/google-gson/) is a popular choice for solving this problem, however we find Jackson to be more performant since it supports alternative ways of processing JSON: streaming, in-memory tree model, and traditional JSON-POJO data binding. Other alternatives: [Json-smart](https://code.google.com/p/json-smart/) and [Boon JSON](https://github.com/RichardHightower/boon/wiki/Boon-JSON-in-five-minutes)
+**[Jackson](http://wiki.fasterxml.com/JacksonHome)**, nesneleri JSON'a vs çeviren bir Java kütüphanesidir. [Gson](https://code.google.com/p/google-gson/) bu problemi çözen gözde bir seçim olsa bile, Jackson'ı JSON işlemenin şu alternatif yollarını desteklediği için daha akıllıca buluyoruz: akıştırma (streaming), bellek içi ağaç modeli (in-memory tree model) ve geleneksel JSON-POJO veri bağlama (data-binding) desteği. Diğer seçenekler: [Json-smart](https://code.google.com/p/json-smart/) ve [Boon JSON](https://github.com/RichardHightower/boon/wiki/Boon-JSON-in-five-minutes)
 
-**Networking, caching, and images.** There are a couple of battle-proven solutions for performing requests to backend servers, which you should use perform considering implementing your own client. Use [Volley](https://android.googlesource.com/platform/frameworks/volley) or [Retrofit](http://square.github.io/retrofit/). Volley also provides helpers to load and cache images. If you choose Retrofit, consider [Picasso](http://square.github.io/picasso/) for loading and caching images, and [OkHttp](http://square.github.io/okhttp/) for efficient HTTP requests. All three Retrofit, Picasso and OkHttp are created by the same company, so they complement each other nicely. [OkHttp can also be used in connection with Volley](http://stackoverflow.com/questions/24375043/how-to-implement-android-volley-with-okhttp-2-0/24951835#24951835).
+**Ağ işleri, önbellekleme ve görseller.** Arkayüzdeki (backend) sunuculara istekte bulunma işlerini yapmak için kendi istemcinizi yazmanın yanında mutlaka hesaba katmanız gereken, rüştünü ispatlamış çözümler var.  [Volley](https://android.googlesource.com/platform/frameworks/volley) veya [Retrofit](http://square.github.io/retrofit/)'i bu amaçla kullanabilirsiniz. Volley aynı zamanda görselleri yüklemek ve önbelleklemek için helper metotlar da sunuyor. Eğer Retrofit'i kullanacaksanız, görselleri yükleme ve önbellekleme işleri için [Picasso](http://square.github.io/picasso/)'yu ve verimli HTTP istekleri için [OkHttp](http://square.github.io/okhttp/)'yi kullanabilirsiniz. Retrofit, Picasso ve OkHttp üçlüsü aynı şirket tarafından geliştirilmiştir ve bir diğerini güzelce tamamlar. [OkHttp aynı zamanda Volley ile bağlantı kurmakta da kullanılabilir](http://stackoverflow.com/questions/24375043/how-to-implement-android-volley-with-okhttp-2-0/24951835#24951835).
 
-**RxJava** is a library for Reactive Programming, in other words, handling asynchronous events. It is a powerful and promising paradigm, which can also be confusing since it's so different. We recommend to take some caution before using this library to architect the entire application. There are some projects done by us using RxJava, if you need help talk to one of these people: Timo Tuominen, Olli Salonen, Andre Medeiros, Mark Voit, Antti Lammi, Vera Izrailit, Juha Ristolainen. We have written some blog posts on it: [[1]](http://blog.futurice.com/tech-pick-of-the-week-rx-for-net-and-rxjava-for-android), [[2]](http://blog.futurice.com/top-7-tips-for-rxjava-on-android), [[3]](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754), [[4]](http://blog.futurice.com/android-development-has-its-own-swift).
+**RxJava** bir Reaktif Programlama kütüphanesidir. Bir başka deyişle eşzamansız olayları (asynchronous events) yönetir. Güçlü ve umut vaat eden bir yaklaşımı vardır ki bu da onun en çok karıştırılan yanıdır. Bu kütüphaneyi tüm uygulama mimarisine uygulamaya çalışmadan önce biraz temkinli yaklaşmanızı öneriyoruz. RxJava kullanarak yaptığımız bazı projeler var. Yardıma ihtiyacınız varsa şu insanlardan biriyle konuşmayı deneyin: Timo Tuominen, Olli Salonen, Andre Medeiros, Mark Voit, Antti Lammi, Vera Izrailit, Juha Ristolainen. Bu abiler sayesinde bu konuda yazılmış blog yazılarımızı okuyabilirsiniz: [[1]](http://blog.futurice.com/tech-pick-of-the-week-rx-for-net-and-rxjava-for-android), [[2]](http://blog.futurice.com/top-7-tips-for-rxjava-on-android), [[3]](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754), [[4]](http://blog.futurice.com/android-development-has-its-own-swift).
 
-If you have no previous experience with Rx, start by applying it only for responses from the API. Alternatively, start by applying it for simple UI event handling, like click events or typing events on a search field. If you are confident in your Rx skills and want to apply it to the whole architecture, then write Javadocs on all the tricky parts. Keep in mind that another programmer unfamiliar to RxJava might have a very hard time maintaining the project. Do your best to help him understand your code and also Rx.
+Eğer Rx ile hiç tecrübeniz yoksa onu sadece API'den dönen yanıtlara uygulamayı deneyin. Bir başka seçenek olarak, tıklama veya bir arama kutusuna yazma gibi basit UI olaylarının yönetimlerine uygulamayı deneyebilirsiniz. Rx yetenekleriniz konusunda iddialıysanız ve onu tüm mimarinize uygulamak istiyorsanız, onunla yaptığınız tüm cambazlıkları Javadoc olarak yazmaya çalışın. RxJava'ya aşina olmayan bir başka programcının proje bakımında çok zor zamanlar geçirebileceğini aklınızdan çıkarmayın. Ona kodunuzu ve Rx'i anlamak konusunda en iyisini yapın - [@oncekiyazilimci](https://twitter.com/oncekiyazilimci)'lardan olmayın.
 
-**[Retrolambda](https://github.com/evant/gradle-retrolambda)** is a Java library for using Lambda expression syntax in Android and other pre-JDK8 platforms. It helps keep your code tight and readable especially if you use a functional style with for example with RxJava. To use it, install JDK8, set that as your SDK Location in the Android Studio Project Structure dialog, and set `JAVA8_HOME` and `JAVA7_HOME` environment variables, then in the project root build.gradle:
+**[Retrolambda](https://github.com/evant/gradle-retrolambda)** Lambda ifadesi söz dizimini Android'de ve JDK8 öncesi platformlarda kullanabilmenizi sağlayan bir Java kütüphanesidir. Örneğin RxJava ile birlikte fonksiyonel bir tarz kullanıyorsanız kodunuzu okunaklı ve sıkı tutmanıza yardımcı olur. Kullanmak için JDK8 kurun ve bunu Android Studio Project Structure diyalogundan SDK Location'unuz olarak ayarlayın. Ardından `JAVA8_HOME` ve `JAVA7_HOME` çevresel değişkenlerinizi ayarlayın ve **projenizin kökündeki** build.gradle dosyasına şunu ekleyin:
 
 ```groovy
 dependencies {
@@ -177,7 +176,7 @@ dependencies {
 }
 ```
 
-and in each module's build.gradle, add
+ve her modülün build.gradle dosyasında da şu değişikliği yapın:
 
 ```groovy
 apply plugin: 'retrolambda'
@@ -195,14 +194,14 @@ retrolambda {
 }
 ```
 
-Android Studio offers code assist support for Java8 lambdas. If you are new to lambdas, just use the following to get started:
+Android Studio size Java8 lambdaları için kod asistanlığı yapar. Eğer Lambdalar konusunda yeniyseniz başlamak için şu tavsiyelere uyun:
 
-- Any interface with just one method is "lambda friendly" and can be folded into the more tight syntax
-- If in doubt about parameters and such, write a normal anon inner class and then let Android Studio fold it into a lambda for you.
+- Sadece bir metodu olan arayüz sınıfları (interface class) "lambda dostu"dur ve daha sıkı bir söz dizimiyle 'katlanabilir' (fold)
+- Parametreler ve bunun gibi şeylerde sorun olursa, normal bir anonim dahili sınıf yazın ve Android Studio'ya sizin yerinize onu bir lambda ifadesi içinde 'katlamasını' söyleyin.
 
-**Beware of the dex method limitation, and avoid using many libraries.** Android apps, when packaged as a dex file, have a hard limitation of 65536 referenced methods [[1]](https://medium.com/@rotxed/dex-skys-the-limit-no-65k-methods-is-28e6cb40cf71) [[2]](http://blog.persistent.info/2014/05/per-package-method-counts-for-androids.html) [[3]](http://jakewharton.com/play-services-is-a-monolith/). You will see a fatal error on compilation if you pass the limit. For that reason, use a minimal amount of libraries, and use the [dex-method-counts](https://github.com/mihaip/dex-method-counts) tool to determine which set of libraries can be used in order to stay under the limit. Especially avoid using the Guava library, since it contains over 13k methods.
+**dex metot sınırlamasına dikkat edin ve çok fazla kütüphane kullanmaktan kaçının.** Android uygulamaları bir dex dosyası olarak paketlenirken, aynı zamanda 65536 adet referanslanmış metot sınırlamasına da uğrar. [[1]](https://medium.com/@rotxed/dex-skys-the-limit-no-65k-methods-is-28e6cb40cf71) [[2]](http://blog.persistent.info/2014/05/per-package-method-counts-for-androids.html) [[3]](http://jakewharton.com/play-services-is-a-monolith/). Bu sınırı geçerseniz derleme sırasında fatal error görürsünüz. Bu sebepten dolayı en az miktarda kütüphane kullanın ve kütüphanelerin sınırın altında kaldığını belirleyebilmek için [dex-method-counts](https://github.com/mihaip/dex-method-counts) gibi araçları kullanın. Özellikle Guava kütüphanesini kullanmaktan kaçının - 13 binin üzerinde metot içeriyor.
 
-### Activities and Fragments
+### Activity'ler ve Fragment'lar
 
 [Fragments](http://developer.android.com/guide/components/fragments.html) should be your default option for implementing a UI screen in Android. Fragments are reusable user interfaces that can be composed in your application. We recommend using fragments instead of [activities](http://developer.android.com/guide/components/activities.html) to represent a user interface screen, here are some reasons why:
 
