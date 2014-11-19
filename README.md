@@ -1,6 +1,6 @@
 # Android geliştirme için örnek alınası davranışlar
 
-Buradaki dersler Futurice'nin Android geliştiricilerinden öğrenildi. Buradaki rehberleri takip ederek tekerleği yeniden icat etmekten kaçınabilirsiniz. Windows Phone ya da iOS geliştirmeyle ilgileniyorsanız [[**iOS için Örnek Alınası Davranışlar**]](https://github.com/futurice/ios-good-practices) veya [**Windows Phone için Örnek Alınası Davranışlar**](https://github.com/futurice/win-client-dev-good-practices) belgelerine bir bakın.
+Buradaki dersler Futurice'nin Android geliştiricilerinden öğrenildi. Buradaki rehberleri takip ederek tekerleği yeniden icat etmekten kaçınabilirsiniz. Windows Phone ya da iOS geliştirmeyle ilgileniyorsanız [**iOS için Örnek Alınası Davranışlar**](https://github.com/futurice/ios-good-practices) veya [**Windows Phone için Örnek Alınası Davranışlar**](https://github.com/futurice/win-client-dev-good-practices) belgelerine bir bakın.
 
 Geribildirimler başımızın üstüne ama öncelikle [bu belgeye](https://github.com/futurice/android-best-practices/tree/master/CONTRIBUTING.md) bir göz atın.
 
@@ -168,7 +168,7 @@ Ne kullanırsanız kullanın, sadece Gradle ve yeni proje yapısının uygulama 
 
 Eğer Rx ile hiç tecrübeniz yoksa onu sadece API'den dönen yanıtlara uygulamayı deneyin. Bir başka seçenek olarak, tıklama veya bir arama kutusuna yazma gibi basit UI olaylarının yönetimlerine uygulamayı deneyebilirsiniz. Rx yetenekleriniz konusunda iddialıysanız ve onu tüm mimarinize uygulamak istiyorsanız, onunla yaptığınız tüm cambazlıkları Javadoc olarak yazmaya çalışın. RxJava'ya aşina olmayan bir başka programcının proje bakımında çok zor zamanlar geçirebileceğini aklınızdan çıkarmayın. Ona kodunuzu ve Rx'i anlamak konusunda en iyisini yapın - [@oncekiyazilimci](https://twitter.com/oncekiyazilimci)'lardan olmayın.
 
-**[Retrolambda](https://github.com/evant/gradle-retrolambda)** Lambda ifadesi söz dizimini Android'de ve JDK8 öncesi platformlarda kullanabilmenizi sağlayan bir Java kütüphanesidir. Örneğin RxJava ile birlikte fonksiyonel bir tarz kullanıyorsanız kodunuzu okunaklı ve sıkı tutmanıza yardımcı olur. Kullanmak için JDK8 kurun ve bunu Android Studio Project Structure diyalogundan SDK Location'unuz olarak ayarlayın. Ardından `JAVA8_HOME` ve `JAVA7_HOME` çevresel değişkenlerinizi ayarlayın ve **projenizin kökündeki** build.gradle dosyasına şunu ekleyin:
+**[Retrolambda](https://github.com/evant/gradle-retrolambda)** Lambda ifadesi söz dizimini Android'de ve JDK8 öncesi platformlarda kullanabilmenizi sağlayan bir Java kütüphanesidir. Örneğin RxJava ile birlikte fonksiyonel bir tarz kullanıyorsanız kodunuzu okunaklı ve sıkı tutmanıza yardımcı olur. Kullanmak için JDK8 kurun ve bunu "Android Studio Project Structure" diyalogundan SDK Location'ınız olarak ayarlayın. Ardından `JAVA8_HOME` ve `JAVA7_HOME` çevresel değişkenlerinizi ayarlayın ve **projenizin kökündeki** build.gradle dosyasına şunu ekleyin:
 
 ```groovy
 dependencies {
@@ -196,8 +196,8 @@ retrolambda {
 
 Android Studio size Java8 lambdaları için kod asistanlığı yapar. Eğer Lambdalar konusunda yeniyseniz başlamak için şu tavsiyelere uyun:
 
-- Sadece bir metodu olan arayüz sınıfları (interface class) "lambda dostu"dur ve daha sıkı bir söz dizimiyle 'katlanabilir' (fold)
-- Parametreler ve bunun gibi şeylerde sorun olursa, normal bir anonim dahili sınıf yazın ve Android Studio'ya sizin yerinize onu bir lambda ifadesi içinde 'katlamasını' söyleyin.
+- Sadece bir metot içeren arayüz sınıfları (interface class) birer "lambda dostu"dur ve daha sıkı bir söz dizimiyle 'katlanabilirler' (foldable)
+- Parametreler ve bunun gibi şeylerde sorun olursa, normal, bildiğiniz bir anonim dahili sınıf yazın ve Android Studio'ya sizin yerinize onu bir lambda ifadesi içinde 'katlamasını' söyleyin.
 
 **dex metot sınırlamasına dikkat edin ve çok fazla kütüphane kullanmaktan kaçının.** Android uygulamaları bir dex dosyası olarak paketlenirken, aynı zamanda 65536 adet referanslanmış metot sınırlamasına da uğrar. [[1]](https://medium.com/@rotxed/dex-skys-the-limit-no-65k-methods-is-28e6cb40cf71) [[2]](http://blog.persistent.info/2014/05/per-package-method-counts-for-androids.html) [[3]](http://jakewharton.com/play-services-is-a-monolith/). Bu sınırı geçerseniz derleme sırasında fatal error görürsünüz. Bu sebepten dolayı en az miktarda kütüphane kullanın ve kütüphanelerin sınırın altında kaldığını belirleyebilmek için [dex-method-counts](https://github.com/mihaip/dex-method-counts) gibi araçları kullanın. Özellikle Guava kütüphanesini kullanmaktan kaçının - 13 binin üzerinde metot içeriyor.
 
