@@ -213,21 +213,22 @@ Android Studio size Java8 lambdaları için kod asistanlığı yapar. Eğer Lamb
 
 - **ActionBar bile Fragment içerisinden yönetilebilir.** Sırf ActionBar'ı yönetmek için UI'ı olmayan bir Fragment oluşturma yolunu seçebilirsiniz veya o an görünen Fragment'ın eylemlerine uygun öğeleri, üstündeki Activity'nin ActionBar'ına ekleyebilirsiniz. [Daha fazlasını buradan](http://www.grokkingandroid.com/adding-action-items-from-within-fragments/) bulabilirsiniz.
 
-Hep söylendiği gibi biz de [matruşka hataları](http://delyan.me/android-s-matryoshka-problem/)na neden olabilen kapsamlı bir [iç içe-nested fragment](https://developer.android.com/about/versions/android-4.2.html#NestedFragments) kullanımını önermiyoruz. İç içe Fragment'ları sadece kullanmanıza değecek yerlerde (örneğin, ekrana benzeyen Fragment'lar olarak, parmak hareketleriyle yana kaydırılan ViewPager'ın içindeki Fragment'lar şeklinde) veya epey bilgi sahibiyseniz kullanın.
+Hep söylendiği gibi biz de [matruşka hataları](http://delyan.me/android-s-matryoshka-problem/)na neden olabilen kapsamlı bir [iç içe-nested fragment](https://developer.android.com/about/versions/android-4.2.html#NestedFragments) kullanımını **önermiyoruz**. İç içe Fragment'ları sadece kullanmanıza değecek yerlerde (örneğin, ekrana benzeyen Fragment'lar olarak, parmak hareketleriyle yana kaydırılan ViewPager'ın içindeki Fragment'lar şeklinde) veya epey bilgi sahibiyseniz kullanın.
 
 Mimari olarak en tepede uygulamanızın üst seviye bir Activity'si olmalı. Bu Activity iş mantığıyla ilgili Fragment'ların çoğunu içermeli. Aynı zamanda destek amaçlı başka Activity'ler de kullanabilirsiniz ama onların ana Activity ile iletişimi basit ve [`Intent.setData()`](http://developer.android.com/reference/android/content/Intent.html#setData(android.net.Uri)) veya [`Intent.setAction()`](http://developer.android.com/reference/android/content/Intent.html#setAction(java.lang.String)) veya benzeri metotlarla sınırlıdır.
 
-### Java packages architecture
+### Java Paketlerinin Yapısı
 
-Java architectures for Android applications can be roughly approximated in [Model-View-Controller](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller). In Android, [Fragment and Activity are actually controller classes](http://www.informit.com/articles/article.aspx?p=2126865). On the other hand, they are explicity part of the user interface, hence are also views.
+Android uygulamalarınızdaki Java yapısı, aşağı yukarı [Model-View-Controller](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) yapısına benzeyebilmeli. Android'de, [Fragment ve Activity aslında birer Controller sınıftır](http://www.informit.com/articles/article.aspx?p=2126865). Diğer taraftan bariz bir biçimde kullanıcı arayüzünün bir parçasıdır ki bu yüzden View katmanı gibidirler.
 
-For this reason, it is hard to classify fragments (or activities) as strictly controllers or views. It's better to let them stay in their own `fragments` package. Activities can stay on the top-level package as long as you follow the advice of the previous section. If you are planning to have more than 2 or 3 activities, then make also an `activities` package.
+Tüm bu nedenlerle Fragment'ları (veya Activity'leri) Controller veya View olarak kesin bir sınıflamaya sokmak zor.
+En iyisi kendi `fragments` paketlerinde kalması. Önceki bölümdeki önerileri uyguladığınız müddetçe, Activity'ler üst seviye bir pakette kalabilir. Eğer 2 veya 3'ten fazla Activity'nizin olmasını planlıyorsanız, bir de `activities` paketiniz olmalı.
 
-Otherwise, the architecture can look like a typical MVC, with a `models` package containing POJOs to be populated through the JSON parser with API responses, and a `views` package containing your custom Views, notifications, action bar views, widgets, etc. Adapters are a gray matter, living between data and views. However, they typically need to export some View via `getView()`, so you can include the `adapters` subpackage inside `views`.
+Bir diğer yandan, paket yapınız tipik MVC yapısına da benzeyebilmeli. API yanıtlarından gelen JSON'ları saklayabileceğiniz POJO'lar (Plain Old Java Object) içeren `models` paketi olmalı; özel View sınıflarınınızı, bildirimlerinizi, widget'larınızı vs bulunduran bir `views` paketi de olmalı. **Adapter**'lar birer gri maddedir. Veri ile View'lar arasında yaşar ve `getView()` metodu aracılığıyla bazı View'ları dışarı göndermeleri gerekir. View'lar ile bu kadar içli dışlı çalıştığından dolayı `views` paketinin altına bir de `adapters` alt paketi oluşturmalısınız. Bunları tamamen iyilik olsu diye söylüyoruz, unutmayın.
 
-Some controller classes are application-wide and close to the Android system. These can live in a `managers` package. Miscellaneous data processing classes, such as "DateUtils", stay in the `utils` package. Classes that are responsible for interacting with the backend stay in the `network` package.
+Bazı controller sınıfları uygulama geneli çalışır ve Android sistemine yakındır. Böyle sınıflar `managers` paketinin içinde durabilir. Çok amaçlı veri işleme sınıfları `utils` paketinde durabilir. Arkayüz (backend) ile etkileşimden sorumlu sınıflar da `network` paketinde durabilir.
 
-All in all, ordered from the closest-to-backend to the closest-to-the-user:
+Hepsini hesaba katarsak arkayüze en yakından kullanıcıya en yakın sınıfları şöyle sıralarız:
 
 ```
 com.futurice.project
@@ -243,7 +244,7 @@ com.futurice.project
    └─ notifications
 ```
 
-### Resources
+### Resource'lar
 
 **Naming.** Follow the convention of prefixing the type, as in `type_foo_bar.xml`. Examples: `fragment_contact_details.xml`, `view_primary_button.xml`, `activity_main.xml`.
 
